@@ -1,0 +1,7 @@
+# Only the public pages should be indexed; the app pages need a login.
+User-agent: *
+Allow: /login
+Allow: /register
+Disallow: /dashboard
+Disallow: /links/
+Disallow: /unlock/

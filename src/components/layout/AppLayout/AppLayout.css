@@ -1,0 +1,17 @@
+.app-layout {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.app-layout__main {
+  flex: 1;
+  width: 100%;
+  max-width: calc(var(--page-max-width) + 2 * var(--page-gutter));
+  margin: 0 auto;
+  padding: 36px var(--page-gutter) 56px;
+}
+
+.app-layout__main:focus {
+  outline: none;
+}

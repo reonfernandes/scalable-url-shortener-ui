@@ -1,0 +1,42 @@
+.link-form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.link-form__divider {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+}
+
+.link-form__divider::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--color-border);
+}
+
+.link-form__row {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.link-form__note {
+  margin-top: -8px;
+  font-size: 13px;
+  line-height: 1.45;
+  color: var(--color-text-muted);
+}
+
+@media (max-width: 520px) {
+  .link-form__row {
+    grid-template-columns: 1fr;
+  }
+}

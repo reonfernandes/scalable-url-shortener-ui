@@ -1,0 +1,48 @@
+.logo {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  text-decoration: none;
+}
+
+.logo--dark,
+.logo--dark:hover {
+  color: var(--color-ink);
+}
+
+.logo--light,
+.logo--light:hover {
+  color: var(--color-bg);
+}
+
+.logo__mark {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  border-radius: var(--radius-md);
+  background: var(--color-accent);
+  color: #ffffff;
+}
+
+.logo__text {
+  font-family: var(--font-display);
+  font-size: 21px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+.logo--sm {
+  gap: 6px;
+}
+
+.logo--sm .logo__mark {
+  width: 22px;
+  height: 22px;
+  border-radius: var(--radius-sm);
+}
+
+.logo--sm .logo__text {
+  font-size: 16px;
+}

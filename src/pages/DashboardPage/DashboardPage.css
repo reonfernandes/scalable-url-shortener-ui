@@ -1,0 +1,45 @@
+.dashboard {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.dashboard__header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.dashboard__heading {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.dashboard__title {
+  font-family: var(--font-display);
+  font-size: clamp(28px, 4vw, 34px);
+  font-weight: 700;
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+}
+
+.dashboard__count {
+  color: var(--color-text-secondary);
+}
+
+.dashboard__empty {
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  background: var(--color-surface);
+}
+
+.dashboard__list {
+  transition: opacity 150ms ease;
+}
+
+.dashboard__list--loading {
+  opacity: 0.6;
+}

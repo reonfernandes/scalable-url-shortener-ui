@@ -1,0 +1,21 @@
+.card {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  min-width: 0;
+  padding: 24px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  background: var(--color-surface);
+}
+
+.card__title {
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.card__title--quiet {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--color-text-secondary);
+}

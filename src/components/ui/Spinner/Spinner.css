@@ -1,0 +1,22 @@
+.spinner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 48px 0;
+  color: var(--color-text-muted);
+}
+
+.spinner--full-page {
+  min-height: 100vh;
+  padding: 0;
+}
+
+.spinner__icon {
+  animation: spinner-rotate 800ms linear infinite;
+}
+
+@keyframes spinner-rotate {
+  to {
+    transform: rotate(360deg);
+  }
+}
