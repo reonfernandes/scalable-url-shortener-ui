@@ -1,0 +1,7 @@
+.copy-button.button--ghost {
+  color: var(--color-text-muted);
+}
+
+.copy-button.button--ghost:hover {
+  color: var(--color-accent);
+}

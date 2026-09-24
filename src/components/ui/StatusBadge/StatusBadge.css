@@ -1,0 +1,49 @@
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 24px;
+  padding: 0 10px;
+  border-radius: var(--radius-full);
+  font-size: 12.5px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.status-badge__dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: currentColor;
+}
+
+.status-badge--active {
+  background: var(--color-success-soft);
+  color: var(--color-success);
+}
+
+.status-badge--active .status-badge__dot {
+  background: var(--color-success-dot);
+}
+
+.status-badge--expired {
+  background: var(--color-warning-soft);
+  color: var(--color-warning);
+}
+
+.status-badge--expired .status-badge__dot {
+  background: var(--color-warning-dot);
+}
+
+.status-badge--inactive {
+  background: var(--color-neutral-soft);
+  color: var(--color-neutral);
+}
+
+.status-badge--protected {
+  gap: 5px;
+  padding: 0 9px;
+  border: 1px solid var(--color-border);
+  color: var(--color-neutral);
+  font-weight: 500;
+}
