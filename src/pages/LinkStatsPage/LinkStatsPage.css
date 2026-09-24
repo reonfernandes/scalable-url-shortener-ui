@@ -1,0 +1,140 @@
+.link-stats {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.link-stats__back {
+  display: inline-flex;
+  align-self: flex-start;
+  align-items: center;
+  gap: 4px;
+  min-height: 32px;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--color-text-secondary);
+}
+
+.link-stats__back:hover {
+  color: var(--color-text);
+}
+
+.link-stats__header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px 32px;
+}
+
+.link-stats__heading {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  min-width: 0;
+  max-width: 100%;
+}
+
+.link-stats__title {
+  font-family: var(--font-display);
+  font-size: clamp(26px, 4vw, 34px);
+  font-weight: 700;
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+  overflow-wrap: anywhere;
+}
+
+.link-stats__short {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+}
+
+.link-stats__short-url {
+  font-family: var(--font-mono);
+  font-size: 17px;
+  font-weight: 500;
+  overflow-wrap: anywhere;
+}
+
+.link-stats__destination {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+  font-size: 14px;
+  color: var(--color-text-muted);
+}
+
+.link-stats__long-url {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  min-width: 0;
+  font-family: var(--font-mono);
+  font-size: 13px;
+  color: var(--color-neutral);
+}
+
+.link-stats__long-url span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.link-stats__long-url svg {
+  flex-shrink: 0;
+}
+
+.link-stats__grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 20px;
+}
+
+.link-stats__details {
+  grid-column: span 2;
+}
+
+.link-stats__total {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-top: -14px;
+}
+
+.link-stats__total-value {
+  font-family: var(--font-display);
+  font-size: 60px;
+  font-weight: 700;
+  line-height: 1.05;
+  letter-spacing: -0.03em;
+  font-variant-numeric: tabular-nums;
+}
+
+.link-stats__total-since {
+  font-size: 14px;
+  color: var(--color-text-muted);
+}
+
+.link-stats__no-data {
+  font-size: 14px;
+  color: var(--color-text-muted);
+}
+
+@media (max-width: 1024px) {
+  .link-stats__grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .link-stats__details {
+    grid-column: auto;
+  }
+}
+
+@media (max-width: 640px) {
+  .link-stats__grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
