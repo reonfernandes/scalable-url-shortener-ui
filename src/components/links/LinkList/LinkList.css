@@ -1,0 +1,34 @@
+.link-list {
+  --link-columns: minmax(0, 1fr) 90px 190px 120px 124px;
+
+  overflow: hidden;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  background: var(--color-surface);
+}
+
+.link-list__head {
+  display: grid;
+  grid-template-columns: var(--link-columns);
+  gap: 24px;
+  padding: 12px 24px;
+  border-bottom: 1px solid var(--color-border);
+  background: var(--color-surface-muted);
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--color-text-secondary);
+}
+
+.link-list__head-actions {
+  text-align: right;
+}
+
+.link-list__items {
+  margin: 0;
+}
+
+@media (max-width: 860px) {
+  .link-list__head {
+    display: none;
+  }
+}

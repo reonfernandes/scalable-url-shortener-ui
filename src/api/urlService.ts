@@ -39,3 +39,18 @@ export async function unlockUrl(shortCode: string, password: string): Promise<Un
   )
   return data.data as UnlockUrlResponse
 }
+
+/**
+ * Finds one of the current user's links by its short code.
+ * The backend has no "get one link" endpoint, so this pages through the user's links.
+ */
+export async function findUrlByShortCode(shortCode: string, signal?: AbortSignal): Promise<ShortUrl | null> {
+  const size = 100
+  for (let page = 1; ; page += 1) {
+    const result = await getMyUrls(page, size, signal)
+    const match = result.content.find((link) => link.shortCode === shortCode)
+    if (match) return match
+    if (page >= result.totalPages) break
+  }
+  return null
+}
