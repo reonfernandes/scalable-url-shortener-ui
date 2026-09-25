@@ -25,7 +25,9 @@ export function initialValues(link?: ShortUrl): LinkFormValues {
   }
 }
 
-export function validateLinkForm(values: LinkFormValues, isEdit: boolean): LinkFormErrors {
+/** `link` is the link being edited; leave it out when creating one. */
+export function validateLinkForm(values: LinkFormValues, link?: ShortUrl): LinkFormErrors {
+  const isEdit = link !== undefined
   const errors: LinkFormErrors = {}
   const longUrl = values.longUrl.trim()
 
@@ -39,8 +41,9 @@ export function validateLinkForm(values: LinkFormValues, isEdit: boolean): LinkF
 
   if (values.title.trim().length > 50) errors.title = 'The title can be at most 50 characters.'
 
+  // Generated codes are 6 characters, so an unchanged code is fine even though a new alias needs 7+.
   const alias = values.customAlias.trim()
-  if (alias && !ALIAS_PATTERN.test(alias)) {
+  if (alias && alias !== link?.shortCode && !ALIAS_PATTERN.test(alias)) {
     errors.customAlias = 'Use 7–30 letters, numbers or hyphens.'
   }
 

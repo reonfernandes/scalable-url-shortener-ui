@@ -48,7 +48,7 @@ export function LinkFormDialog(props: LinkFormDialogProps) {
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault()
-    const validationErrors = validateLinkForm(values, isEdit)
+    const validationErrors = validateLinkForm(values, link)
     setErrors(validationErrors)
     setFormError('')
     if (Object.keys(validationErrors).length > 0) return
