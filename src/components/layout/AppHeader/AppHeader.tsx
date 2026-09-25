@@ -1,19 +1,15 @@
 import { useState } from 'react'
 import { LogOut } from 'lucide-react'
-import { useNavigate } from 'react-router'
+import { NavLink, useNavigate } from 'react-router'
 import { useAuth } from '../../../hooks/useAuth'
+import { getInitials } from '../../../utils/format'
+import { isAdmin } from '../../../utils/roles'
 import { Logo } from '../../common/Logo/Logo'
 import { Button } from '../../ui/Button/Button'
 import './AppHeader.css'
 
-function getInitials(name: string): string {
-  return name
-    .split(/\s+/)
-    .filter(Boolean)
-    .slice(0, 2)
-    .map((part) => part[0].toUpperCase())
-    .join('')
-}
+const navLinkClass = ({ isActive }: { isActive: boolean }) =>
+  isActive ? 'app-header__nav-link app-header__nav-link--active' : 'app-header__nav-link'
 
 export function AppHeader() {
   const { user, logout } = useAuth()
@@ -29,7 +25,21 @@ export function AppHeader() {
   return (
     <header className="app-header">
       <div className="app-header__inner">
-        <Logo to="/dashboard" />
+        <div className="app-header__start">
+          <Logo to="/dashboard" />
+          {/* Only admins get a second page, so only they need the menu. */}
+          {isAdmin(user) && (
+            <nav className="app-header__nav" aria-label="Main">
+              <NavLink to="/dashboard" className={navLinkClass}>
+                Your links
+              </NavLink>
+              <NavLink to="/admin/users" className={navLinkClass}>
+                Users
+                <span className="app-header__admin-badge">Admin</span>
+              </NavLink>
+            </nav>
+          )}
+        </div>
         <div className="app-header__account">
           {user && (
             <div className="app-header__user">
