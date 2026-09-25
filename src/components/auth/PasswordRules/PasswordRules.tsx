@@ -1,5 +1,5 @@
 import { Check, Circle } from 'lucide-react'
-import { PASSWORD_RULES } from './passwordRules'
+import { PASSWORD_RULES } from './passwordPolicy'
 import './PasswordRules.css'
 
 /** Live checklist under the password field. */
