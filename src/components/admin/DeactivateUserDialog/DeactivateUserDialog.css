@@ -1,0 +1,48 @@
+.deactivate-dialog__icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  background: var(--color-danger-soft);
+  color: var(--color-danger);
+}
+
+.deactivate-dialog__email {
+  font-family: var(--font-mono);
+  font-size: 14px;
+}
+
+.deactivate-dialog__effects {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin: 0;
+  padding: 16px 18px;
+  border: 1px solid var(--color-divider);
+  border-radius: 10px;
+  background: var(--color-surface-muted);
+  font-size: 14px;
+  color: var(--color-ink-soft);
+}
+
+.deactivate-dialog__effects li {
+  position: relative;
+  padding-left: 18px;
+}
+
+.deactivate-dialog__effects li::before {
+  content: '';
+  position: absolute;
+  top: 8px;
+  left: 2px;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--color-danger);
+}
+
+.deactivate-dialog__effects li.deactivate-dialog__undo::before {
+  background: var(--color-success-dot);
+}

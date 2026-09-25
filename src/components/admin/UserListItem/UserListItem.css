@@ -1,0 +1,133 @@
+/* Column sizes are shared with the header row in UserList.css */
+.user-item {
+  display: grid;
+  grid-template-columns: var(--user-columns);
+  align-items: center;
+  gap: 24px;
+  padding: 14px 24px;
+  border-bottom: 1px solid var(--color-divider);
+}
+
+.user-item__main {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  min-width: 0;
+}
+
+.user-item__avatar {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: var(--color-accent-soft);
+  color: var(--color-accent-hover);
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.user-item__text {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.user-item__name {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.user-item__you {
+  padding: 1px 7px;
+  border-radius: var(--radius-full);
+  background: var(--color-neutral-soft);
+  color: var(--color-neutral);
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.user-item__email {
+  overflow: hidden;
+  font-family: var(--font-mono);
+  font-size: 13px;
+  color: var(--color-text-muted);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.user-item__role-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  height: 24px;
+  padding: 0 10px;
+  border-radius: var(--radius-full);
+  background: var(--color-neutral-soft);
+  color: var(--color-neutral);
+  font-size: 12.5px;
+  font-weight: 500;
+}
+
+.user-item__role-badge--admin {
+  background: var(--color-accent-soft);
+  color: var(--color-accent-hover);
+  font-weight: 600;
+}
+
+.user-item__joined {
+  font-size: 14px;
+  color: var(--color-text-secondary);
+}
+
+.user-item__actions {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.user-item__deactivate.button--secondary {
+  border-color: #f0c9c4;
+  color: var(--color-danger);
+}
+
+.user-item__deactivate.button--secondary:hover {
+  background: var(--color-danger-soft);
+  color: var(--color-danger);
+}
+
+/* Small screens: each row becomes a card */
+@media (max-width: 860px) {
+  .user-item {
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    grid-template-areas:
+      'main main main'
+      'role status actions';
+    gap: 10px 8px;
+    padding: 16px;
+  }
+
+  .user-item__main {
+    grid-area: main;
+  }
+
+  .user-item__role {
+    grid-area: role;
+  }
+
+  .user-item__status {
+    grid-area: status;
+  }
+
+  .user-item__joined {
+    display: none;
+  }
+
+  .user-item__actions {
+    grid-area: actions;
+  }
+}

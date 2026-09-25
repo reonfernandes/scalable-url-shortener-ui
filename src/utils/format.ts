@@ -15,6 +15,16 @@ export function formatDate(value: string | null | undefined): string {
   return Number.isNaN(date.getTime()) ? '—' : dateFormatter.format(date)
 }
 
+/** "Reon Fernandes" -> "RF". */
+export function getInitials(name: string): string {
+  return name
+    .split(/\s+/)
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((part) => part[0].toUpperCase())
+    .join('')
+}
+
 export function formatNumber(value: number | null | undefined): string {
   return numberFormatter.format(value ?? 0)
 }

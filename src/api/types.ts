@@ -27,11 +27,21 @@ export interface PageResponse<T> {
 
 // ---- Users ----
 
+export type UserRole = 'USER' | 'ADMIN'
+
 export interface User {
   userId: string
   name: string
   email: string
+  roles: UserRole[]
+  /** false = deactivated by an admin. */
+  active: boolean
+  /** ISO date-time without a time zone. */
+  createdAt: string | null
 }
+
+/** Filter for the admin user list. */
+export type UserStatusFilter = 'all' | 'active' | 'deactivated'
 
 export interface RegisterRequest {
   name: string
