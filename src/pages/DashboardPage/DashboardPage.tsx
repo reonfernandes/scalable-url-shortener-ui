@@ -1,6 +1,7 @@
 import { useCallback, useState } from 'react'
 import { Link2, Plus, RotateCw } from 'lucide-react'
 import { useSearchParams } from 'react-router'
+import { getClickCounts } from '../../api/analyticsService'
 import { getMyUrls } from '../../api/urlService'
 import type { ShortUrl } from '../../api/types'
 import { Seo } from '../../components/common/Seo/Seo'
@@ -35,6 +36,11 @@ export default function DashboardPage() {
     (signal) => getMyUrls(page, PAGE_SIZE, signal),
     `my-urls:${page}`,
   )
+
+  // Clicks are counted by analytics-service, so they are loaded separately for the links on this page.
+  // If that request fails, the list still shows and the clicks column shows "—".
+  const urlIds = data?.content.map((link) => link.urlId) ?? []
+  const clicksQuery = useApiQuery((signal) => getClickCounts(urlIds, signal), `clicks:${urlIds.join(',')}`)
 
   const goToPage = useCallback(
     (nextPage: number) => {
@@ -105,6 +111,7 @@ export default function DashboardPage() {
         <div className={loading ? 'dashboard__list dashboard__list--loading' : 'dashboard__list'} aria-busy={loading}>
           <LinkList
             links={data.content}
+            clickCounts={clicksQuery.data}
             onEdit={openEdit}
             onDelete={openDelete}
             footer={
