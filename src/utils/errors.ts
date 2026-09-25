@@ -9,6 +9,7 @@ export interface ParsedError {
 }
 
 const DEFAULT_MESSAGE = 'Something went wrong. Please try again.'
+const TOO_MANY_ATTEMPTS_MESSAGE = 'Too many attempts. Please wait a moment and try again.'
 
 /** Turns any thrown error into a message that is safe to show the user. */
 export function parseApiError(error: unknown, fallback = DEFAULT_MESSAGE): ParsedError {
@@ -24,6 +25,12 @@ export function parseApiError(error: unknown, fallback = DEFAULT_MESSAGE): Parse
   }
 
   const { status, data } = error.response
+
+  // The API gateway limits password attempts (login, sign-up, unlocking a link) and answers 429 with no body.
+  if (status === 429) {
+    return { message: TOO_MANY_ATTEMPTS_MESSAGE, fieldErrors: {}, status }
+  }
+
   // Server errors carry no useful detail for the user.
   const message = status >= 500 ? fallback : data?.message || fallback
 
