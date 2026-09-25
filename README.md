@@ -31,6 +31,7 @@ plain CSS: one global file for design tokens and one CSS file per component. No 
 | `/register`           | Logged out | Create an account. A live checklist shows the password rules.                 |
 | `/dashboard`          | Logged in | Your links (newest first) with clicks and status. Create, edit, copy and delete links. |
 | `/links/:urlId`       | Logged in | Stats for one link: total clicks, and clicks by browser, OS and country. Uses the link's id, so the address stays the same when its alias changes. |
+| `/admin/users`        | Admins    | List, search and filter users; activate or deactivate them. Others see "Admins only". |
 | `/unlock/:shortCode`  | Anyone    | A visitor enters the password of a protected link and is sent on.             |
 | anything else         | Anyone    | "Page not found".                                                              |
 
@@ -77,6 +78,8 @@ it, which protects it from XSS. Because of that:
 - Axios is created with `withCredentials: true`, so the browser sends the cookie with every request.
 - On start-up the app calls `GET /api/v1/user/me` to find out whether the cookie is still valid.
 - Any `401` response logs the user out in the UI and sends them to `/login`.
+- `/me` also returns the user's `roles`. Admins (`ADMIN` role) get a **Users** item in the header menu. Admins are
+  created in the database (see the backend README); the gateway checks the role again on every admin request.
 - A `429` response (too many login, sign-up or unlock attempts from one IP, limited by the gateway) shows
   "Too many attempts. Please wait a moment and try again."
 
@@ -101,6 +104,9 @@ The cookie is `SameSite=Strict`, and cross-origin cookie requests need extra COR
 | `DELETE` | `/api/v1/url/delete-url?urlId=`        | Delete a link                           |
 | `GET`    | `/api/v1/analytics/clicks?urlIds=1,2`  | Click totals for the links on a dashboard page |
 | `GET`    | `/api/v1/analytics/{urlId}`            | Link stats                              |
+| `GET`    | `/api/v1/admin/accounts?page=&size=&search=&status=` | Admin: user list                |
+| `PUT`    | `/api/v1/admin/account/deactivate?userId=` | Admin: deactivate a user            |
+| `PUT`    | `/api/v1/admin/account/activate?userId=`   | Admin: activate a user              |
 | `POST`   | `/api/v1/redirect/{shortCode}`         | Unlock a password-protected link        |
 
 Types for every request and response are in `src/api/types.ts`. Error responses
@@ -125,14 +131,15 @@ src/
 │   ├── ui/               # Generic building blocks: Button, TextField, Dialog, Card, Alert, …
 │   ├── common/           # App-wide pieces: Logo, Seo
 │   ├── layout/           # AuthLayout (login/sign-up frame), AppLayout + AppHeader
-│   ├── routing/          # RequireAuth, RedirectIfAuthenticated, HomeRedirect
+│   ├── routing/          # RequireAuth, RequireAdmin, RedirectIfAuthenticated, HomeRedirect
 │   ├── auth/             # AuthForm, PasswordRules
 │   ├── links/            # LinkList, LinkListItem, Pagination, link dialogs
+│   ├── admin/            # UserList, UserListItem, UserStatusFilter, DeactivateUserDialog
 │   └── analytics/        # BarList, LinkDetails
 ├── context/              # AuthProvider (who is logged in)
-├── hooks/                # useAuth, useApiQuery, useCopyToClipboard
+├── hooks/                # useAuth, useApiQuery, useCopyToClipboard, useDebouncedValue
 ├── pages/                # One folder per route, lazy-loaded
-├── utils/                # Formatting, validation and error helpers
+├── utils/                # Formatting, validation, error and role helpers
 ├── App.tsx               # Routes
 ├── main.tsx              # Entry point
 └── index.css             # Design tokens and base styles
