@@ -1,0 +1,36 @@
+.status-filter {
+  display: flex;
+  gap: 4px;
+  padding: 4px;
+  border-radius: 10px;
+  background: var(--color-neutral-soft);
+}
+
+.status-filter__option {
+  height: 36px;
+  padding: 0 16px;
+  border: none;
+  border-radius: 7px;
+  background: transparent;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--color-neutral);
+}
+
+.status-filter__option:hover {
+  color: var(--color-text);
+}
+
+.status-filter__option[aria-pressed='true'] {
+  background: var(--color-surface);
+  box-shadow: 0 1px 2px rgba(23, 24, 28, 0.08);
+  font-weight: 600;
+  color: var(--color-text);
+}
+
+@media (max-width: 520px) {
+  .status-filter__option {
+    flex: 1;
+    padding: 0 8px;
+  }
+}

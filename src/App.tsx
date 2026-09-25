@@ -5,6 +5,7 @@ import { AppLayout } from './components/layout/AppLayout/AppLayout'
 import { AuthLayout } from './components/layout/AuthLayout/AuthLayout'
 import { HomeRedirect } from './components/routing/HomeRedirect'
 import { RedirectIfAuthenticated } from './components/routing/RedirectIfAuthenticated'
+import { RequireAdmin } from './components/routing/RequireAdmin'
 import { RequireAuth } from './components/routing/RequireAuth'
 import { Spinner } from './components/ui/Spinner/Spinner'
 import { AuthProvider } from './context/AuthProvider'
@@ -14,6 +15,7 @@ const LoginPage = lazy(() => import('./pages/LoginPage/LoginPage'))
 const RegisterPage = lazy(() => import('./pages/RegisterPage/RegisterPage'))
 const DashboardPage = lazy(() => import('./pages/DashboardPage/DashboardPage'))
 const LinkStatsPage = lazy(() => import('./pages/LinkStatsPage/LinkStatsPage'))
+const AdminUsersPage = lazy(() => import('./pages/AdminUsersPage/AdminUsersPage'))
 const UnlockPage = lazy(() => import('./pages/UnlockPage/UnlockPage'))
 const NotFoundPage = lazy(() => import('./pages/NotFoundPage/NotFoundPage'))
 
@@ -52,6 +54,11 @@ const router = createBrowserRouter([
             children: [
               { path: 'dashboard', element: <DashboardPage /> },
               { path: 'links/:urlId', element: <LinkStatsPage /> },
+              {
+                // Only admins; others see an "Admins only" message.
+                element: <RequireAdmin />,
+                children: [{ path: 'admin/users', element: <AdminUsersPage /> }],
+              },
             ],
           },
         ],
