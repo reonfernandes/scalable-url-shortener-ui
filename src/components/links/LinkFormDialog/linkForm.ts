@@ -7,9 +7,14 @@ export interface LinkFormValues {
   customAlias: string
   expiryDate: string
   password: string
+  /** Edit only: take the expiry date or password off the link. */
+  removeExpiry: boolean
+  removePassword: boolean
 }
 
 export type LinkFormField = keyof LinkFormValues
+export type LinkFormTextField = Exclude<LinkFormField, 'removeExpiry' | 'removePassword'>
+export type LinkFormCheckbox = 'removeExpiry' | 'removePassword'
 export type LinkFormErrors = Partial<Record<LinkFormField, string>>
 
 // Same limits as the backend's UrlRequest validation.
@@ -22,10 +27,14 @@ export function initialValues(link?: ShortUrl): LinkFormValues {
     customAlias: link?.shortCode ?? '',
     expiryDate: toDateInputValue(link?.expiresOn),
     password: '',
+    removeExpiry: false,
+    removePassword: false,
   }
 }
 
-export function validateLinkForm(values: LinkFormValues, isEdit: boolean): LinkFormErrors {
+/** `link` is the link being edited; leave it out when creating one. */
+export function validateLinkForm(values: LinkFormValues, link?: ShortUrl): LinkFormErrors {
+  const isEdit = link !== undefined
   const errors: LinkFormErrors = {}
   const longUrl = values.longUrl.trim()
 
@@ -39,16 +48,17 @@ export function validateLinkForm(values: LinkFormValues, isEdit: boolean): LinkF
 
   if (values.title.trim().length > 50) errors.title = 'The title can be at most 50 characters.'
 
+  // Generated codes are 6 characters, so an unchanged code is fine even though a new alias needs 7+.
   const alias = values.customAlias.trim()
-  if (alias && !ALIAS_PATTERN.test(alias)) {
+  if (alias && alias !== link?.shortCode && !ALIAS_PATTERN.test(alias)) {
     errors.customAlias = 'Use 7–30 letters, numbers or hyphens.'
   }
 
-  if (values.expiryDate && values.expiryDate < todayDateInputValue()) {
+  if (!values.removeExpiry && values.expiryDate && values.expiryDate < todayDateInputValue()) {
     errors.expiryDate = 'Pick today or a later date.'
   }
 
-  if (values.password && (values.password.length < 4 || values.password.length > 72)) {
+  if (!values.removePassword && values.password && (values.password.length < 4 || values.password.length > 72)) {
     errors.password = 'The password must be 4–72 characters.'
   }
 
@@ -73,10 +83,14 @@ export function toUpdateRequest(values: LinkFormValues, link: ShortUrl): UpdateU
   if (values.customAlias.trim() && values.customAlias.trim() !== original.customAlias) {
     request.customAlias = values.customAlias.trim()
   }
-  if (values.expiryDate && values.expiryDate !== original.expiryDate) {
+  // Ticking "Remove expiry date", or emptying the date field, takes the expiry off.
+  if (values.removeExpiry || (!values.expiryDate && original.expiryDate)) {
+    request.removeExpiry = true
+  } else if (values.expiryDate && values.expiryDate !== original.expiryDate) {
     request.expiresAt = toBackendDateTime(values.expiryDate)
   }
-  if (values.password) request.password = values.password
+  if (values.removePassword) request.removePassword = true
+  else if (values.password) request.password = values.password
   return request
 }
 

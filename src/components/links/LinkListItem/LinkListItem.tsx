@@ -10,14 +10,16 @@ import './LinkListItem.css'
 
 interface LinkListItemProps {
   link: ShortUrl
+  /** Total clicks; undefined while loading or if it couldn't be loaded. */
+  clicks: number | undefined
   onEdit: (link: ShortUrl) => void
   onDelete: (link: ShortUrl) => void
 }
 
 /** One row of the links table (a card on small screens). Memoised so other rows don't re-render. */
-export const LinkListItem = memo(function LinkListItem({ link, onEdit, onDelete }: LinkListItemProps) {
+export const LinkListItem = memo(function LinkListItem({ link, clicks, onEdit, onDelete }: LinkListItemProps) {
   const title = getLinkTitle(link)
-  const statsPath = `/links/${encodeURIComponent(link.shortCode)}`
+  const statsPath = `/links/${link.urlId}`
 
   return (
     <li className="link-item">
@@ -37,7 +39,7 @@ export const LinkListItem = memo(function LinkListItem({ link, onEdit, onDelete 
       </div>
 
       <span className="link-item__clicks">
-        {formatNumber(link.clickCount)}
+        {clicks === undefined ? '—' : formatNumber(clicks)}
         <span className="link-item__clicks-label"> clicks</span>
       </span>
 

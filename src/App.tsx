@@ -51,7 +51,7 @@ const router = createBrowserRouter([
             element: <AppLayout />,
             children: [
               { path: 'dashboard', element: <DashboardPage /> },
-              { path: 'links/:shortCode', element: <LinkStatsPage /> },
+              { path: 'links/:urlId', element: <LinkStatsPage /> },
             ],
           },
         ],

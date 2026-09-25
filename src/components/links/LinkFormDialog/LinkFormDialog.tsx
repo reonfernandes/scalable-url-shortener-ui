@@ -13,8 +13,9 @@ import {
   toCreateRequest,
   toUpdateRequest,
   validateLinkForm,
+  type LinkFormCheckbox,
   type LinkFormErrors,
-  type LinkFormField,
+  type LinkFormTextField,
   type LinkFormValues,
 } from './linkForm'
 import './LinkFormDialog.css'
@@ -43,12 +44,18 @@ export function LinkFormDialog(props: LinkFormDialogProps) {
   const shortUrlBase = link ? link.shortUrl.slice(0, -link.shortCode.length) : `${SHORT_URL_BASE}/`
   const shortUrlPrefix = stripProtocol(shortUrlBase)
 
-  const setField = (field: LinkFormField) => (event: ChangeEvent<HTMLInputElement>) =>
+  const setField = (field: LinkFormTextField) => (event: ChangeEvent<HTMLInputElement>) =>
     setValues((current) => ({ ...current, [field]: event.target.value }))
+  const setCheckbox = (field: LinkFormCheckbox) => (event: ChangeEvent<HTMLInputElement>) =>
+    setValues((current) => ({ ...current, [field]: event.target.checked }))
+
+  // Only an existing expiry date or password can be removed.
+  const canRemoveExpiry = Boolean(isEdit && link?.expiresOn)
+  const canRemovePassword = Boolean(isEdit && link?.isPasswordProtected)
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault()
-    const validationErrors = validateLinkForm(values, isEdit)
+    const validationErrors = validateLinkForm(values, link)
     setErrors(validationErrors)
     setFormError('')
     if (Object.keys(validationErrors).length > 0) return
@@ -140,25 +147,43 @@ export function LinkFormDialog(props: LinkFormDialogProps) {
         />
 
         <div className="link-form__row">
-          <TextField
-            label="Expires on"
-            type="date"
-            min={todayDateInputValue()}
-            value={values.expiryDate}
-            onChange={setField('expiryDate')}
-            error={errors.expiryDate}
-          />
-          <TextField
-            label="Password"
-            type="password"
-            autoComplete="new-password"
-            placeholder={isEdit && link?.isPasswordProtected ? 'Keep current password' : 'No password'}
-            value={values.password}
-            onChange={setField('password')}
-            error={errors.password}
-            maxLength={72}
-            revealable
-          />
+          <div className="link-form__field">
+            <TextField
+              label="Expires on"
+              type="date"
+              min={todayDateInputValue()}
+              value={values.expiryDate}
+              onChange={setField('expiryDate')}
+              error={errors.expiryDate}
+              disabled={values.removeExpiry}
+            />
+            {canRemoveExpiry && (
+              <label className="link-form__check">
+                <input type="checkbox" checked={values.removeExpiry} onChange={setCheckbox('removeExpiry')} />
+                Remove expiry date
+              </label>
+            )}
+          </div>
+          <div className="link-form__field">
+            <TextField
+              label="Password"
+              type="password"
+              autoComplete="new-password"
+              placeholder={canRemovePassword ? 'Keep current password' : 'No password'}
+              value={values.password}
+              onChange={setField('password')}
+              error={errors.password}
+              maxLength={72}
+              revealable
+              disabled={values.removePassword}
+            />
+            {canRemovePassword && (
+              <label className="link-form__check">
+                <input type="checkbox" checked={values.removePassword} onChange={setCheckbox('removePassword')} />
+                Remove password
+              </label>
+            )}
+          </div>
         </div>
         <p className="link-form__note">
           With a password, visitors must enter it before they are sent to the destination.

@@ -1,17 +1,19 @@
 import type { ReactNode } from 'react'
-import type { ShortUrl } from '../../../api/types'
+import type { ClickCounts, ShortUrl } from '../../../api/types'
 import { LinkListItem } from '../LinkListItem/LinkListItem'
 import './LinkList.css'
 
 interface LinkListProps {
   links: ShortUrl[]
+  /** Clicks per urlId. Missing while they load or if analytics is unavailable. */
+  clickCounts?: ClickCounts
   onEdit: (link: ShortUrl) => void
   onDelete: (link: ShortUrl) => void
   /** Shown under the list, e.g. pagination. */
   footer?: ReactNode
 }
 
-export function LinkList({ links, onEdit, onDelete, footer }: LinkListProps) {
+export function LinkList({ links, clickCounts, onEdit, onDelete, footer }: LinkListProps) {
   return (
     <section className="link-list" aria-label="Your links">
       <div className="link-list__head" aria-hidden="true">
@@ -23,7 +25,13 @@ export function LinkList({ links, onEdit, onDelete, footer }: LinkListProps) {
       </div>
       <ul className="link-list__items" role="list">
         {links.map((link) => (
-          <LinkListItem key={link.urlId} link={link} onEdit={onEdit} onDelete={onDelete} />
+          <LinkListItem
+            key={link.urlId}
+            link={link}
+            clicks={clickCounts?.[link.urlId]}
+            onEdit={onEdit}
+            onDelete={onDelete}
+          />
         ))}
       </ul>
       {footer}

@@ -32,6 +32,15 @@
   outline-offset: 0;
 }
 
+.text-field__control:has(.text-field__input:disabled) {
+  background: var(--color-surface-sunken);
+}
+
+.text-field__input:disabled {
+  color: var(--color-text-disabled);
+  cursor: not-allowed;
+}
+
 .text-field--invalid .text-field__control {
   border-color: var(--color-danger);
 }

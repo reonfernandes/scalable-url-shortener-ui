@@ -63,7 +63,6 @@ export interface ShortUrl {
   shortCode: string
   shortUrl: string
   longUrl: string
-  clickCount: number | null
   isActive: boolean
   isPasswordProtected: boolean
   /** ISO date-time without a time zone, e.g. "2026-09-24T10:15:30". */
@@ -81,7 +80,12 @@ export interface CreateUrlRequest {
 }
 
 /** Only the fields that are sent are changed. */
-export type UpdateUrlRequest = Partial<CreateUrlRequest>
+export interface UpdateUrlRequest extends Partial<CreateUrlRequest> {
+  /** true: the link never expires. */
+  removeExpiry?: boolean
+  /** true: the link no longer needs a password. */
+  removePassword?: boolean
+}
 
 export interface UnlockUrlResponse {
   longUrl: string
@@ -90,9 +94,12 @@ export interface UnlockUrlResponse {
 // ---- Analytics ----
 
 export interface UrlStats {
-  shortCode: string
+  urlId: number
   totalClicks: number
   clicksByBrowser: Record<string, number>
   clicksByOs: Record<string, number>
   clicksByCountry: Record<string, number>
 }
+
+/** Total clicks per link, keyed by urlId, e.g. { "1": 12, "2": 0 }. */
+export type ClickCounts = Record<string, number>

@@ -29,8 +29,8 @@ plain CSS: one global file for design tokens and one CSS file per component. No 
 | `/`                   | Anyone    | Sends you to `/dashboard` if you are logged in, otherwise to `/login`.         |
 | `/login`              | Logged out | Log in with email and password.                                               |
 | `/register`           | Logged out | Create an account. A live checklist shows the password rules.                 |
-| `/dashboard`          | Logged in | Your links with clicks and status. Create, edit, copy and delete links.        |
-| `/links/:shortCode`   | Logged in | Stats for one link: total clicks, and clicks by browser, OS and country.       |
+| `/dashboard`          | Logged in | Your links (newest first) with clicks and status. Create, edit, copy and delete links. |
+| `/links/:urlId`       | Logged in | Stats for one link: total clicks, and clicks by browser, OS and country. Uses the link's id, so the address stays the same when its alias changes. |
 | `/unlock/:shortCode`  | Anyone    | A visitor enters the password of a protected link and is sent on.             |
 | anything else         | Anyone    | "Page not found".                                                              |
 
@@ -77,6 +77,8 @@ it, which protects it from XSS. Because of that:
 - Axios is created with `withCredentials: true`, so the browser sends the cookie with every request.
 - On start-up the app calls `GET /api/v1/user/me` to find out whether the cookie is still valid.
 - Any `401` response logs the user out in the UI and sends them to `/login`.
+- A `429` response (too many login, sign-up or unlock attempts from one IP, limited by the gateway) shows
+  "Too many attempts. Please wait a moment and try again."
 
 ### Same origin in development
 
@@ -92,26 +94,25 @@ The cookie is `SameSite=Strict`, and cross-origin cookie requests need extra COR
 | `POST`   | `/api/v1/user/login`                   | Log in (sets the cookie)                |
 | `POST`   | `/api/v1/user/logout`                  | Log out (clears the cookie)             |
 | `GET`    | `/api/v1/user/me`                      | Who is logged in                        |
-| `GET`    | `/api/v1/url/my-urls?page=&size=`      | Dashboard list (pages start at 1)       |
+| `GET`    | `/api/v1/url/my-urls?page=&size=`      | Dashboard list (pages start at 1, newest first) |
+| `GET`    | `/api/v1/url/{urlId}`                  | One link, for the stats page            |
 | `POST`   | `/api/v1/url/new`                      | Create a short link                     |
-| `PATCH`  | `/api/v1/url/update-url?urlId=`        | Edit a link (only changed fields are sent) |
+| `PATCH`  | `/api/v1/url/update-url?urlId=`        | Edit a link (only changed fields are sent; `removeExpiry` / `removePassword` take them off) |
 | `DELETE` | `/api/v1/url/delete-url?urlId=`        | Delete a link                           |
-| `GET`    | `/api/v1/analytics/{shortCode}`        | Link stats                              |
+| `GET`    | `/api/v1/analytics/clicks?urlIds=1,2`  | Click totals for the links on a dashboard page |
+| `GET`    | `/api/v1/analytics/{urlId}`            | Link stats                              |
 | `POST`   | `/api/v1/redirect/{shortCode}`         | Unlock a password-protected link        |
 
 Types for every request and response are in `src/api/types.ts`. Error responses
 (`{ status, error, message, fieldErrors }`) are turned into readable messages by `src/utils/errors.ts`, and
 `fieldErrors` are shown under the matching form field.
 
-### Known backend limitations
+Clicks are counted only by analytics-service, so they are not part of the link data. The dashboard asks for the
+totals of the links on the current page in one request. If that request fails, the list still shows and the
+clicks column shows "—".
 
-- **Opening a protected link:** `GET /{shortCode}` on the gateway answers `400 URL is password protected` as JSON.
-  For visitors to see the password page instead, the backend should redirect those requests to the UI's
-  `/unlock/{shortCode}` page.
-- **List order:** `my-urls` has no sort order, so new links appear wherever the database puts them (usually last).
-  Sorting by `createdAt` descending on the backend would show new links first.
-- **One link by code:** there is no "get one link" endpoint, so the stats page finds a link by going through
-  `my-urls` 100 at a time.
+A visitor opening a password-protected short link is redirected by the backend to this app's
+`/unlock/{shortCode}` page (the backend's `UI_BASE_URL` setting).
 
 ---
 

@@ -1,8 +1,8 @@
 import { useState } from 'react'
 import { ChevronLeft, ExternalLink, Globe, Link2Off, Pencil } from 'lucide-react'
-import { Link, useLocation, useNavigate, useParams } from 'react-router'
+import { Link, useLocation, useParams } from 'react-router'
 import { getUrlStats } from '../../api/analyticsService'
-import { findUrlByShortCode } from '../../api/urlService'
+import { getUrl } from '../../api/urlService'
 import type { ShortUrl } from '../../api/types'
 import { BarList } from '../../components/analytics/BarList/BarList'
 import { LinkDetails } from '../../components/analytics/LinkDetails/LinkDetails'
@@ -23,24 +23,29 @@ import './LinkStatsPage.css'
 const UNKNOWN_COUNTRY = 'Unknown'
 
 export default function LinkStatsPage() {
-  const { shortCode = '' } = useParams()
-  const navigate = useNavigate()
+  // The page address uses the link's id, which stays the same when its alias changes.
+  const urlId = Number(useParams().urlId)
+  const isValidId = Number.isInteger(urlId) && urlId > 0
   // The dashboard passes the link along, so the header shows straight away.
   const linkFromDashboard = (useLocation().state as { link?: ShortUrl } | null)?.link
   const [editing, setEditing] = useState(false)
 
-  const linkQuery = useApiQuery((signal) => findUrlByShortCode(shortCode, signal), `link:${shortCode}`)
-  const statsQuery = useApiQuery((signal) => getUrlStats(shortCode, signal), `stats:${shortCode}`)
+  const linkQuery = useApiQuery(
+    (signal) => (isValidId ? getUrl(urlId, signal) : Promise.resolve(null)),
+    `link:${urlId}`,
+  )
+  const statsQuery = useApiQuery(
+    (signal) => (isValidId ? getUrlStats(urlId, signal) : Promise.resolve(null)),
+    `stats:${urlId}`,
+  )
 
-  const link =
-    linkQuery.data !== undefined
-      ? linkQuery.data
-      : linkFromDashboard?.shortCode === shortCode
-        ? linkFromDashboard
-        : undefined
+  const link = linkQuery.data ?? (linkFromDashboard?.urlId === urlId ? linkFromDashboard : undefined)
   const stats = statsQuery.data
+  // 404: no such link. 403: it belongs to someone else. Both look the same to the user.
+  const notFound =
+    !isValidId || linkQuery.data === null || linkQuery.error?.status === 404 || linkQuery.error?.status === 403
 
-  if (link === null) {
+  if (notFound) {
     return (
       <div className="link-stats">
         <Seo title="Link not found" noIndex />
@@ -159,11 +164,9 @@ export default function LinkStatsPage() {
           mode="edit"
           link={link}
           onClose={() => setEditing(false)}
-          onSaved={(changes) => {
+          onSaved={() => {
             setEditing(false)
-            // A new alias means a new address for this page.
-            if (changes.customAlias) navigate(`/links/${encodeURIComponent(changes.customAlias)}`, { replace: true })
-            else linkQuery.reload()
+            linkQuery.reload()
           }}
         />
       )}
